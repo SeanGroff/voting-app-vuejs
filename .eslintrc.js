@@ -19,6 +19,14 @@ module.exports = {
   plugins: ['vue'],
   // add your custom rules here
   rules: {
+    'space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'never',
+        named: 'never',
+        asyncArrow: 'always'
+      }
+    ],
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
