@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from 'apollo-boost'
 
 export default (_, { id, email, name }, { cache }) => {
   // query the current user from client cache
