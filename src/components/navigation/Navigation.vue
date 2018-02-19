@@ -6,46 +6,48 @@
       <div class="navbar-brand">
         <div class="navbar-item">Pollz</div>
         <button
-          class="button navbar-burger is-active"
-          @click="hamburgerClick"
+          class="button navbar-burger"
+          :class="{ 'is-active': isActive }"
+          @click="isActive = !isActive"
         >
           <span />
           <span />
           <span />
         </button>
       </div>
-      <div class="navbar-menu is-active">
+      <div
+        class="navbar-menu"
+        :class="{ 'is-active': isActive }"
+      >
         <div class="navbar-start">
           <router-link
-            class="navbar-item is-hoverable is-active"
+            class="navbar-item is-hoverable"
             to="/"
-            @click="handleClick('home')"
+            exact
           >
             Home
           </router-link>
         </div>
         <div class="navbar-end">
           <router-link
-            class="navbar-item is-active"
+            class="navbar-item"
             to="/signup"
-            @click="handleClick('signup')"
           >
             Sign up
           </router-link>
           <router-link
-            class="navbar-item is-active"
+            class="navbar-item"
             to="/login"
-            @click="handleClick('login')"
           >
             Login
           </router-link>
           <div
-            class="navbar-item has-dropdown is-hoverable is-active"
+            class="navbar-item has-dropdown is-hoverable"
           >
             <router-link
               class="navbar-router-link"
+              style="margin: auto"
               to="/mypolls"
-              @click="handleClick('mypolls')"
             >
               My Polls
             </router-link>
@@ -67,7 +69,7 @@
 export default {
   data() {
     return {
-      activeItem: ''
+      isActive: false
     }
   }
 }
