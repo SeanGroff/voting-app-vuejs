@@ -6,12 +6,24 @@
 </template>
 
 <script>
+import { persistor } from './graphql/apolloClient'
 import Navigation from './components/navigation/Navigation'
 
 export default {
   name: 'App',
   components: {
     Navigation
+  },
+  async mounted() {
+    console.log('loading...')
+    try {
+      await persistor.restore()
+      console.log('cache persisted from localStorage!')
+      console.log('done loading!')
+    } catch (err) {
+      console.log(err)
+      console.log('done loading!')
+    }
   }
 }
 </script>
