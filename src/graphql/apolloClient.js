@@ -4,7 +4,7 @@ import ApolloClient, { InMemoryCache } from 'apollo-boost'
 import { CachePersistor } from 'apollo-cache-persist'
 import VueApollo from 'vue-apollo'
 
-import { defaults, resolvers } from './resolvers'
+import { defaults, resolvers } from '@/graphql/resolvers'
 
 // Create Apollo Client
 export const apolloClient = new ApolloClient({

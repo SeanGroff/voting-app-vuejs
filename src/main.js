@@ -2,10 +2,13 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
-import App from './App'
-import router from './router'
+import VeeValidate from 'vee-validate'
+import App from '@/App'
+import router from '@/router'
 
-import { apolloClient } from './graphql/apolloClient'
+import { apolloClient } from '@/graphql/apolloClient'
+
+Vue.use(VeeValidate)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient

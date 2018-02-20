@@ -1,4 +1,4 @@
-import updateCurrentUser from './updateCurrentUser'
+import updateCurrentUser from '@/graphql/resolvers/updateCurrentUser'
 
 export const defaults = {
   currentUser: {

@@ -1,18 +1,21 @@
 <template>
   <div id="app">
     <navigation />
+    <hero />
     <router-view/>
   </div>
 </template>
 
 <script>
-import { persistor } from './graphql/apolloClient'
-import Navigation from './components/navigation/Navigation'
+import { persistor } from '@/graphql/apolloClient'
+import Navigation from '@/components/navigation/Navigation'
+import Hero from '@/components/common/Hero'
 
 export default {
   name: 'App',
   components: {
-    Navigation
+    Navigation,
+    Hero
   },
   async mounted() {
     console.log('loading...')
