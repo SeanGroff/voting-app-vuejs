@@ -5,7 +5,7 @@
     <div
       class="column"
       style="max-width: 512px">
-      <header>Get Started Creating Polls Today!</header>
+      <base-header>Get Started Creating Polls Today!</base-header>
 
       <div class="field">
         <label
@@ -16,7 +16,7 @@
         <div class="control has-icons-left">
           <input
             v-model="name"
-            v-validate="'required|alpha'"
+            v-validate="'required|alpha_spaces'"
             class="input"
             :class="{ 'is-danger': errors.has('name') }"
             type="text"
@@ -145,11 +145,12 @@
 </template>
 
 <script>
-import Header from '@/components/common/Header'
+import axios from 'axios'
+import BaseHeader from '@/components/BaseHeader'
 
 export default {
   components: {
-    Header
+    BaseHeader
   },
   data() {
     return {
@@ -169,7 +170,20 @@ export default {
           return
         }
 
-        console.log('submit')
+        const { name, email, password, passwordConfirm } = this.$data
+
+        const { data } = await axios.post('/signup', {
+          name,
+          email,
+          password,
+          passwordConfirm
+        })
+
+        localStorage.setItem('token', data.token)
+
+        // this.props.handleAuth({ authenticated: true, username: email });
+
+        // this.props.history.push('/');
       } catch (err) {
         console.error(err)
       }

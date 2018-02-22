@@ -19,7 +19,10 @@
         class="navbar-menu"
         :class="{ 'is-active': isActive }"
       >
-        <div class="navbar-start">
+        <div
+          class="navbar-start"
+          @click="isActive = !isActive"
+        >
           <router-link
             class="navbar-item is-hoverable"
             to="/"
@@ -28,7 +31,10 @@
             Home
           </router-link>
         </div>
-        <div class="navbar-end">
+        <div
+          class="navbar-end"
+          @click="isActive = !isActive"
+        >
           <router-link
             class="navbar-item"
             to="/signup"
