@@ -62,6 +62,13 @@
           <i class="fas fa-exclamation-triangle" />
           {{ errors.first('password') }}
         </p>
+        <p
+          v-show="authError"
+          class="help is-danger"
+        >
+          <i class="fas fa-exclamation-triangle" />
+          {{ authError }}
+        </p>
       </div>
 
       <div class="field is-grouped">
@@ -99,6 +106,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import BaseHeader from '@/components/BaseHeader'
 
 export default {
@@ -108,7 +116,8 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      authError: ''
     }
   },
   methods: {
@@ -121,9 +130,23 @@ export default {
           return
         }
 
-        console.log('submit')
+        const { email, password } = this.$data
+
+        const response = await axios.post('/login', {
+          email,
+          password
+        })
+
+        if (localStorage.getItem('token')) {
+          localStorage.removeItem('token')
+          localStorage.setItem('token', response.token)
+        } else {
+          localStorage.setItem('token', response.token)
+        }
+
+        this.$router.push('/')
       } catch (err) {
-        console.error(err)
+        this.authError = 'Incorrect username/password, please try again.'
       }
     }
   }

@@ -184,7 +184,7 @@ export default {
           name,
           email,
           password,
-          pass: confirmPassword
+          confirmPassword
         })
 
         if (localStorage.getItem('token')) {
