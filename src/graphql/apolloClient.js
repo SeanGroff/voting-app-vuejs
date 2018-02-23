@@ -10,6 +10,15 @@ import { defaults, resolvers } from '@/graphql/resolvers'
 export const apolloClient = new ApolloClient({
   // Pass your GraphQL endpoint to uri
   uri: 'http://localhost:3000/graphql',
+  // This function is called on each request
+  request: operation => {
+    const token = localStorage.getItem('token')
+    operation.setContext({
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    })
+  },
   // Pass Apollo-Link-State
   clientState: {
     defaults,

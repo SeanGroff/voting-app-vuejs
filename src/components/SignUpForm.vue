@@ -121,6 +121,13 @@
           <i class="fas fa-exclamation-triangle" />
           {{ errors.first('confirmPassword') }}
         </p>
+        <p
+          v-show="authError"
+          class="help is-danger"
+        >
+          <i class="fas fa-exclamation-triangle" />
+          {{ authError }}
+        </p>
       </div>
 
       <div class="field is-grouped">
@@ -157,7 +164,8 @@ export default {
       name: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      authError: ''
     }
   },
   methods: {
@@ -170,28 +178,27 @@ export default {
           return
         }
 
-        const { name, email, password, passwordConfirm } = this.$data
+        const { name, email, password, confirmPassword } = this.$data
 
-        const { data } = await axios.post('/signup', {
+        const response = await axios.post('/signup', {
           name,
           email,
           password,
-          passwordConfirm
+          pass: confirmPassword
         })
 
-        localStorage.setItem('token', data.token)
+        if (localStorage.getItem('token')) {
+          localStorage.removeItem('token')
+          localStorage.setItem('token', response.token)
+        } else {
+          localStorage.setItem('token', response.token)
+        }
 
-        // this.props.handleAuth({ authenticated: true, username: email });
-
-        // this.props.history.push('/');
+        this.$router.push('/')
       } catch (err) {
-        console.error(err)
+        this.authError = err.response.data
       }
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>
