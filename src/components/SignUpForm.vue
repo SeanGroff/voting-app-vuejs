@@ -65,20 +65,22 @@
             <i class="fas fa-envelope" />
           </span>
         </div>
-        <p
-          v-show="!$v.email.required"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Email is required' }}
-        </p>
-        <p
-          v-show="!$v.email.email"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Invalid email' }}
-        </p>
+        <div v-show="$v.email.$error">
+          <p
+            v-show="!$v.email.required"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Email is required' }}
+          </p>
+          <p
+            v-show="!$v.email.email"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Invalid email' }}
+          </p>
+        </div>
       </div>
 
       <div class="field">
@@ -101,27 +103,29 @@
             <i class="fas fa-unlock-alt" />
           </span>
         </div>
-        <p
-          v-show="!$v.password.required"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Password is required' }}
-        </p>
-        <p
-          v-show="!$v.password.minLength"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Password must be at least 8 characters in length' }}
-        </p>
-        <p
-          v-show="!$v.password.sameAsConfirmPassword"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Passwords do not match' }}
-        </p>
+        <div v-show="$v.password.$error">
+          <p
+            v-show="!$v.password.required"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Password is required' }}
+          </p>
+          <p
+            v-show="!$v.password.minLength"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Password must be at least 8 characters in length' }}
+          </p>
+          <p
+            v-show="!$v.password.sameAsConfirmPassword"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Passwords do not match' }}
+          </p>
+        </div>
       </div>
 
       <div class="field">
@@ -144,27 +148,29 @@
             <i class="fas fa-unlock-alt" />
           </span>
         </div>
-        <p
-          v-show="$v.confirmPassword.required"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Password is required' }}
-        </p>
-        <p
-          v-show="$v.confirmPassword.minLength"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Password must be at least 8 characters in length' }}
-        </p>
-        <p
-          v-show="$v.confirmPassword.sameAsPassword"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ 'Passwords do not match' }}
-        </p>
+        <div v-show="$v.confirmPassword.$error">
+          <p
+            v-show="!$v.confirmPassword.required"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Password is required' }}
+          </p>
+          <p
+            v-show="!$v.confirmPassword.minLength"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Password must be at least 8 characters in length' }}
+          </p>
+          <p
+            v-show="!$v.confirmPassword.sameAsPassword"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Passwords do not match' }}
+          </p>
+        </div>
         <p
           v-show="authError"
           class="help is-danger"

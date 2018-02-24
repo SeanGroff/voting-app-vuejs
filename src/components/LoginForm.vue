@@ -15,9 +15,9 @@
         <div class="control has-icons-left">
           <input
             v-model="email"
-            v-validate="'required|email'"
+            @input="$v.email.$touch"
             class="input"
-            :class="{ 'is-danger': errors.has('email') }"
+            :class="{ 'is-danger': $v.email.$error }"
             type="email"
             name="email"
             placeholder="Email"
@@ -26,13 +26,22 @@
             <i class="fas fa-envelope" />
           </span>
         </div>
-        <p
-          v-show="errors.has('email')"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ errors.first('email') }}
-        </p>
+        <div v-show="$v.email.$error">
+          <p
+            v-show="!$v.email.required"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Email address required' }}
+          </p>
+          <p
+            v-show="!$v.email.email"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Invalid email' }}
+          </p>
+        </div>
       </div>
 
       <div class="field">
@@ -44,9 +53,9 @@
         <div class="control has-icons-left">
           <input
             v-model="password"
-            v-validate="'required|min:8'"
+            @input="$v.password.$touch"
             class="input"
-            :class="{ 'is-danger': errors.has('password')}"
+            :class="{ 'is-danger': $v.password.$error }"
             type="password"
             name="password"
             placeholder="Password"
@@ -55,13 +64,22 @@
             <i class="fas fa-unlock-alt" />
           </span>
         </div>
-        <p
-          v-show="errors.has('password')"
-          class="help is-danger"
-        >
-          <i class="fas fa-exclamation-triangle" />
-          {{ errors.first('password') }}
-        </p>
+        <div v-show="$v.password.$error">
+          <p
+            v-show="!$v.password.required"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Password required' }}
+          </p>
+          <p
+            v-show="!$v.password.minLength"
+            class="help is-danger"
+          >
+            <i class="fas fa-exclamation-triangle" />
+            {{ 'Password must be at least 8 characters in length' }}
+          </p>
+        </div>
         <p
           v-show="authError"
           class="help is-danger"
@@ -107,6 +125,7 @@
 
 <script>
 import axios from 'axios'
+import { required, email, minLength } from 'vuelidate/lib/validators'
 import BaseHeader from '@/components/BaseHeader'
 
 export default {
@@ -120,15 +139,20 @@ export default {
       authError: ''
     }
   },
+  validations: {
+    email: {
+      required,
+      email
+    },
+    password: {
+      required,
+      minLength: minLength(8)
+    }
+  },
   methods: {
     handleSubmit: async function() {
       try {
-        const errStatus = await this.$validator.validateAll()
-
-        if (!errStatus) {
-          console.log('Fix errors')
-          return
-        }
+        if (this.$v.invalid) return
 
         const { email, password } = this.$data
 
