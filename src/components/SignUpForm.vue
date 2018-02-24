@@ -205,6 +205,7 @@
 import axios from 'axios'
 import { required, email, minLength, sameAs } from 'vuelidate/lib/validators'
 import BaseHeader from '@/components/BaseHeader'
+import updateCurrentUser from '@/graphql/resolvers/updateCurrentUser'
 
 export default {
   components: {
@@ -216,7 +217,8 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
-      authError: ''
+      authError: '',
+      currentUser: ''
     }
   },
   validations: {
@@ -240,7 +242,21 @@ export default {
     }
   },
   methods: {
-    handleSubmit: async function() {
+    setCurrentUser({ id, email, name }) {
+      try {
+        this.$apollo.mutate({
+          mutation: updateCurrentUser,
+          variables: {
+            id,
+            email,
+            name
+          }
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async handleSubmit() {
       try {
         if (this.$v.$invalid) return
 
@@ -260,9 +276,15 @@ export default {
           localStorage.setItem('token', response.token)
         }
 
+        this.setCurrentUser({
+          id: response.uid,
+          email: response.email,
+          name: response.name
+        })
+
         this.$router.push('/')
       } catch (err) {
-        this.authError = err.response.data
+        this.authError = err.response.data || 'Error registering...'
       }
     }
   }

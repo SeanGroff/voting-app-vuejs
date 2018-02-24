@@ -28,5 +28,5 @@ export default (_, { id, email, name }, { cache }) => {
 
   // Set new state in the client cache
   cache.writeData({ query, data })
-  return data.currentUser
+  return null
 }
