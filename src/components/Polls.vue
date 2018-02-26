@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import BaseHeader from '@/components/BaseHeader'
 export default {
   components: {
@@ -30,6 +31,9 @@ export default {
     return {
       polls: []
     }
+  },
+  computed: {
+    ...mapGetters(['isAuthorized', 'userId'])
   }
 }
 </script>

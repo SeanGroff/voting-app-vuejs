@@ -5,6 +5,7 @@ import VueApollo from 'vue-apollo'
 import Vuelidate from 'vuelidate'
 import App from '@/App'
 import router from '@/router'
+import { store } from '@/store'
 import { apolloClient } from '@/graphql/apolloClient'
 
 Vue.use(Vuelidate)
@@ -20,6 +21,7 @@ new Vue({
   el: '#app',
   provide: apolloProvider.provide(),
   router,
+  store,
   components: { App },
   template: '<App/>'
 })
