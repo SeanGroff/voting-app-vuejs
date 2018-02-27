@@ -12,31 +12,44 @@ export const store = new Vuex.Store({
       name: '',
       email: ''
     },
-    error: ''
+    error: '',
+    loading: false
   },
   getters: {
     userId: state => state.user.id,
     username: state => state.user.email,
     isAuthorized: state => state.loggedIn,
-    errorMessage: state => state.error
+    errorMessage: state => state.error,
+    loadingStatus: state => state.loading
   },
   mutations: {
-    setCurrentUser: (state, payload) => {
-      state.user = payload
+    AUTH_PENDING: state => {
+      state.loading = true
     },
-    setLoggedInUser: (state, payload) => {
-      state.loggedIn = payload
+    AUTH_FAILURE: (state, payload) => {
+      state.error = payload
+      state.loading = false
+    },
+    AUTH_SUCCESS: (state, payload) => {
+      state.user = payload
+      state.loggedIn = true
+      state.error = ''
+      state.loading = false
     },
     setErrorMessage: (state, payload) => {
       state.error = payload
     }
   },
   actions: {
-    updateCurrentUser: async (
+    updateErrorMessage: ({ commit }, payload) => {
+      commit('setErrorMessage', payload)
+      return payload
+    },
+    registerCurrentUser: async (
       { commit },
       { name, email, password, confirmPassword }
     ) => {
-      commit('setErrorMessage', '')
+      commit('AUTH_PENDING')
 
       try {
         const { data } = await axios.post('/signup', {
@@ -46,25 +59,37 @@ export const store = new Vuex.Store({
           confirmPassword
         })
 
-        if (localStorage.getItem('token')) {
-          localStorage.removeItem('token')
-        }
-
-        localStorage.setItem('token', data.token)
-
-        commit('setCurrentUser', {
+        commit('AUTH_SUCCESS', {
           id: data.uid,
           name: data.name,
           email: data.email
         })
 
-        return { success: true }
+        return { ...data, error: null }
       } catch (err) {
-        const authError = err.response.data
-          ? err.response.data
-          : 'Error registering...'
-        commit('setErrorMessage', authError)
-        return { success: false }
+        commit('AUTH_FAILURE', err.response.data)
+        return { error: err.response.data }
+      }
+    },
+    loginCurrentUser: async ({ commit }, { email, password }) => {
+      commit('AUTH_PENDING')
+
+      try {
+        const { data } = await axios.post('/login', {
+          email,
+          password
+        })
+
+        commit('AUTH_SUCCESS', {
+          id: data.uid,
+          name: data.name,
+          email: data.email
+        })
+
+        return { ...data, error: null }
+      } catch (err) {
+        commit('AUTH_FAILURE', err.response.data)
+        return { error: err.response.data }
       }
     }
   }

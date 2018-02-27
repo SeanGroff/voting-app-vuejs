@@ -37,12 +37,14 @@
         >
           <router-link
             class="navbar-item"
+            :class="{'hide': isAuthorized}"
             to="/signup"
           >
             Sign up
           </router-link>
           <router-link
             class="navbar-item"
+            :class="{'hide': isAuthorized}"
             to="/login"
           >
             Login
@@ -52,6 +54,7 @@
           >
             <router-link
               class="navbar-router-link"
+              :class="{'hide': !isAuthorized}"
               style="margin: auto"
               to="/mypolls"
             >
@@ -72,11 +75,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
       isActive: false
     }
+  },
+  computed: {
+    ...mapGetters(['isAuthorized'])
   }
 }
 </script>

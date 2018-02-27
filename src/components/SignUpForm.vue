@@ -184,7 +184,9 @@
         <div class="control">
           <button
             class="button is-success is-link"
+            :class="{ 'is-loading': loadingStatus }"
             type="submit"
+            :disabled="isDisabled"
           >
             Register
           </button>
@@ -240,23 +242,34 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['errorMessage'])
+    ...mapGetters(['errorMessage', 'loadingStatus']),
+    isDisabled() {
+      return this.$v.$invalid
+    }
+  },
+  mounted() {
+    this.updateErrorMessage('')
   },
   methods: {
-    ...mapActions(['updateCurrentUser']),
+    ...mapActions(['registerCurrentUser', 'updateErrorMessage']),
     async handleSubmit() {
       if (this.$v.$invalid) return
 
       const { name, email, password, confirmPassword } = this.$data
 
-      const { success } = await this.updateCurrentUser({
+      const res = await this.registerCurrentUser({
         name,
         email,
         password,
         confirmPassword
       })
 
-      if (success) {
+      if (!res.error) {
+        if (localStorage.getItem('token')) {
+          localStorage.removeItem('token')
+        }
+
+        localStorage.setItem('token', res.token)
         this.$router.push('/')
       }
     }

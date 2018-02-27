@@ -81,11 +81,11 @@
           </p>
         </div>
         <p
-          v-show="authError"
+          v-show="errorMessage"
           class="help is-danger"
         >
           <i class="fas fa-exclamation-triangle" />
-          {{ authError }}
+          {{ 'Invalid username or password' }}
         </p>
       </div>
 
@@ -93,10 +93,13 @@
         <div class="control">
           <button
             class="button is-success is-link"
+            :class="{ 'is-loading': loadingStatus }"
             type="submit"
+            :disabled="isDisabled"
           >
             Submit
           </button>
+
         </div>
         <div class="control">
           <router-link
@@ -124,7 +127,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions, mapGetters } from 'vuex'
 import { required, email, minLength } from 'vuelidate/lib/validators'
 import BaseHeader from '@/components/BaseHeader'
 
@@ -135,8 +138,7 @@ export default {
   data() {
     return {
       email: '',
-      password: '',
-      authError: ''
+      password: ''
     }
   },
   validations: {
@@ -149,28 +151,34 @@ export default {
       minLength: minLength(8)
     }
   },
+  computed: {
+    ...mapGetters(['errorMessage', 'loadingStatus']),
+    isDisabled() {
+      return this.$v.$invalid
+    }
+  },
+  mounted() {
+    this.updateErrorMessage('')
+  },
   methods: {
-    handleSubmit: async function() {
-      try {
-        if (this.$v.invalid) return
+    ...mapActions(['loginCurrentUser', 'updateErrorMessage']),
+    async handleSubmit() {
+      if (this.$v.invalid) return
 
-        const { email, password } = this.$data
+      const { email, password } = this.$data
 
-        const response = await axios.post('/login', {
-          email,
-          password
-        })
+      const res = await this.loginCurrentUser({
+        email,
+        password
+      })
 
+      if (!res.error) {
         if (localStorage.getItem('token')) {
           localStorage.removeItem('token')
-          localStorage.setItem('token', response.token)
-        } else {
-          localStorage.setItem('token', response.token)
         }
 
+        localStorage.setItem('token', res.token)
         this.$router.push('/')
-      } catch (err) {
-        this.authError = 'Incorrect username/password, please try again.'
       }
     }
   }
