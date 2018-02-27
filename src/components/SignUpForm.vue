@@ -172,11 +172,11 @@
           </p>
         </div>
         <p
-          v-show="authError"
+          v-show="errorMessage"
           class="help is-danger"
         >
           <i class="fas fa-exclamation-triangle" />
-          {{ authError }}
+          {{ errorMessage }}
         </p>
       </div>
 
@@ -202,7 +202,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapActions, mapGetters } from 'vuex'
 import { required, email, minLength, sameAs } from 'vuelidate/lib/validators'
 import BaseHeader from '@/components/BaseHeader'
 
@@ -216,7 +216,6 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
-      authError: '',
       currentUser: ''
     }
   },
@@ -240,30 +239,25 @@ export default {
       sameAsPassword: sameAs('password')
     }
   },
+  computed: {
+    ...mapGetters(['errorMessage'])
+  },
   methods: {
+    ...mapActions(['updateCurrentUser']),
     async handleSubmit() {
-      try {
-        if (this.$v.$invalid) return
+      if (this.$v.$invalid) return
 
-        const { name, email, password, confirmPassword } = this.$data
+      const { name, email, password, confirmPassword } = this.$data
 
-        const response = await axios.post('/signup', {
-          name,
-          email,
-          password,
-          confirmPassword
-        })
+      const { success } = await this.updateCurrentUser({
+        name,
+        email,
+        password,
+        confirmPassword
+      })
 
-        if (localStorage.getItem('token')) {
-          localStorage.removeItem('token')
-          localStorage.setItem('token', response.token)
-        } else {
-          localStorage.setItem('token', response.token)
-        }
-
+      if (success) {
         this.$router.push('/')
-      } catch (err) {
-        this.authError = err.response.data || 'Error registering...'
       }
     }
   }
