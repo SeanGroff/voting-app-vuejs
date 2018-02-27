@@ -7,16 +7,16 @@ import VueApollo from 'vue-apollo'
 // Create Apollo Client
 export const apolloClient = new ApolloClient({
   // Pass your GraphQL endpoint to uri
-  uri: 'http://localhost:3000/graphql'
+  uri: 'http://localhost:3000/graphql',
   // This function is called on each request
-  // request: operation => {
-  //   const token = localStorage.getItem('token')
-  //   operation.setContext({
-  //     headers: {
-  //       authorization: `Bearer ${token}`
-  //     }
-  //   })
-  // },
+  request: operation => {
+    const token = localStorage.getItem('token')
+    operation.setContext({
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    })
+  }
 })
 
 export const persistor = new CachePersistor({
