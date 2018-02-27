@@ -18,15 +18,7 @@ export default {
     BaseHero
   },
   async mounted() {
-    console.log('loading...')
-    try {
-      await persistor.restore()
-      console.log('cache persisted from localStorage!')
-      console.log('done loading!')
-    } catch (err) {
-      console.log(err)
-      console.log('done loading!')
-    }
+    await persistor.restore()
   }
 }
 </script>
