@@ -10,8 +10,8 @@
       >
         <span>{{ poll.name }}</span>
         <button
-          class="is-danger"
           :class="{ 'hide': poll.createdBy === username }"
+          class="is-danger"
         >
           Delete
         </button>

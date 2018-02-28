@@ -16,12 +16,12 @@
         <div class="control has-icons-left">
           <input
             v-model="name"
-            @input="$v.name.$touch"
-            class="input"
             :class="{ 'is-danger': $v.name.$error }"
+            class="input"
             type="text"
             name="name"
             placeholder="Name"
+            @input="$v.name.$touch"
           >
           <span class="icon is-small is-left">
             <i class="fas fa-user" />
@@ -54,12 +54,12 @@
         <div class="control has-icons-left">
           <input
             v-model="email"
-            @input="$v.email.$touch"
-            class="input"
             :class="{ 'is-danger': $v.email.$error }"
+            class="input"
             type="email"
             name="email"
             placeholder="Email"
+            @input="$v.email.$touch"
           >
           <span class="icon is-small is-left">
             <i class="fas fa-envelope" />
@@ -92,12 +92,12 @@
         <div class="control has-icons-left">
           <input
             v-model="password"
-            @input="$v.password.$touch"
-            class="input"
             :class="{ 'is-danger': $v.password.$error }"
+            class="input"
             type="password"
             name="password"
             placeholder="Password"
+            @input="$v.password.$touch"
           >
           <span class="icon is-small is-left">
             <i class="fas fa-unlock-alt" />
@@ -137,12 +137,12 @@
         <div class="control has-icons-left">
           <input
             v-model="confirmPassword"
-            @input="$v.confirmPassword.$touch"
-            class="input"
             :class="{ 'is-danger': $v.confirmPassword.$error }"
+            class="input"
             type="password"
             name="confirmPassword"
             placeholder="Confirm Password"
+            @input="$v.confirmPassword.$touch"
           >
           <span class="icon is-small is-left">
             <i class="fas fa-unlock-alt" />
@@ -183,10 +183,10 @@
       <div class="field is-grouped">
         <div class="control">
           <button
-            class="button is-success is-link"
             :class="{ 'is-loading': loadingStatus }"
-            type="submit"
             :disabled="isDisabled"
+            class="button is-success is-link"
+            type="submit"
           >
             Register
           </button>

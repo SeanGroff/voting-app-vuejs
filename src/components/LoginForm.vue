@@ -15,12 +15,12 @@
         <div class="control has-icons-left">
           <input
             v-model="email"
-            @input="$v.email.$touch"
-            class="input"
             :class="{ 'is-danger': $v.email.$error }"
+            class="input"
             type="email"
             name="email"
             placeholder="Email"
+            @input="$v.email.$touch"
           >
           <span class="icon is-small is-left">
             <i class="fas fa-envelope" />
@@ -53,12 +53,12 @@
         <div class="control has-icons-left">
           <input
             v-model="password"
-            @input="$v.password.$touch"
-            class="input"
             :class="{ 'is-danger': $v.password.$error }"
+            class="input"
             type="password"
             name="password"
             placeholder="Password"
+            @input="$v.password.$touch"
           >
           <span class="icon is-small is-left">
             <i class="fas fa-unlock-alt" />
@@ -92,10 +92,10 @@
       <div class="field is-grouped">
         <div class="control">
           <button
-            class="button is-success is-link"
             :class="{ 'is-loading': loadingStatus }"
-            type="submit"
             :disabled="isDisabled"
+            class="button is-success is-link"
+            type="submit"
           >
             Submit
           </button>

@@ -6,8 +6,8 @@
       <div class="navbar-brand">
         <div class="navbar-item">Pollz</div>
         <button
-          class="button navbar-burger"
           :class="{ 'is-active': isActive }"
+          class="button navbar-burger"
           @click="isActive = !isActive"
         >
           <span />
@@ -16,8 +16,8 @@
         </button>
       </div>
       <div
-        class="navbar-menu"
         :class="{ 'is-active': isActive }"
+        class="navbar-menu"
       >
         <div
           class="navbar-start"
@@ -36,15 +36,15 @@
           @click="isActive = !isActive"
         >
           <router-link
-            class="navbar-item"
             :class="{'hide': isAuthorized}"
+            class="navbar-item"
             to="/signup"
           >
             Sign up
           </router-link>
           <router-link
-            class="navbar-item"
             :class="{'hide': isAuthorized}"
+            class="navbar-item"
             to="/login"
           >
             Login
@@ -53,8 +53,8 @@
             class="navbar-item has-dropdown is-hoverable"
           >
             <router-link
-              class="navbar-router-link"
               :class="{'hide': !isAuthorized}"
+              class="navbar-router-link"
               style="margin: auto"
               to="/mypolls"
             >
