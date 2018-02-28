@@ -10,8 +10,8 @@
       >
         <span>{{ poll.name }}</span>
         <button
-          :class="{ 'hide': poll.createdBy === username }"
-          class="is-danger"
+          v-show="poll.createdBy === username"
+          class="delete is-danger"
         >
           Delete
         </button>
@@ -23,6 +23,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import BaseHeader from '@/components/BaseHeader'
+import getPolls from '@/graphql/getPolls'
+
 export default {
   components: {
     BaseHeader
@@ -32,15 +34,33 @@ export default {
       polls: []
     }
   },
+  apollo: {
+    polls: {
+      query: getPolls,
+      variables: {
+        uid: this.userId
+      }
+    }
+  },
   computed: {
-    ...mapGetters(['isAuthorized', 'userId'])
+    ...mapGetters(['isAuthorized', 'userId', 'username'])
   }
 }
 </script>
 
 <style lang="scss" scoped>
+ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
+  width: 300px;
 
   &:hover {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);

@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost'
 
 export default gql`
-  query getPolls($uid: String) @client {
+  query getPolls($uid: String) {
     polls(uid: $uid) {
       id
       createdBy {
