@@ -50,7 +50,7 @@
         </label>
         <div class="is-flex">
           <input
-            v-model="options[index]"
+            v-model="options[index].name"
             :name="index"
             class="input"
             type="text"
@@ -101,8 +101,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
 import BaseHeader from '@/components/BaseHeader'
+import createPoll from '@/graphql/createPoll'
 
 export default {
   components: {
@@ -111,22 +113,38 @@ export default {
   data() {
     return {
       name: '',
-      options: ['', '']
+      options: [{ name: '' }, { name: '' }]
     }
   },
   computed: {
+    ...mapGetters(['user']),
     isDisabled() {
       return this.$v.$invalid || this.options.length < 2
     }
   },
   methods: {
-    handleSubmit() {
+    async handleSubmit() {
       if (this.$v.$invalid) return
 
-      console.log('submit')
+      try {
+        const res = await this.$apollo.mutate({
+          mutation: createPoll,
+          variables: {
+            user: this.user,
+            pollName: this.name,
+            pollOptions: this.options
+          }
+        })
+
+        if (!res.err) {
+          this.$router.push(`/polls/${res.data.createPoll.id}`)
+        }
+      } catch (err) {
+        console.log(`Error: ${err}`)
+      }
     },
     addOption() {
-      this.options.push('New Option')
+      this.options.push({ name: 'New Option' })
     },
     removeOption(option) {
       this.options.splice(option, 1)

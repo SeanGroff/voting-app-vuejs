@@ -18,6 +18,7 @@ export const store = new Vuex.Store({
     loading: false
   },
   getters: {
+    user: state => state.user,
     userId: state => state.user.id,
     username: state => state.user.email,
     isAuthorized: state => state.loggedIn,

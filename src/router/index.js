@@ -4,6 +4,7 @@ import Polls from '@/components/Polls'
 import SignUpForm from '@/components/SignUpForm'
 import Login from '@/components/LoginForm'
 import NewPoll from '@/components/NewPoll'
+import PollDetail from '@/components/PollDetail'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/new',
       name: 'NewPoll',
       component: NewPoll
+    },
+    {
+      path: '/polls/*',
+      name: 'PollDetail',
+      component: PollDetail
     }
   ]
 })
