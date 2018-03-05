@@ -6,7 +6,23 @@
       :key="index"
     >
       <li>{{ option.name }}</li>
-      <li>{{ option.votes }}</li>
+      <li>
+        {{ option.votes }}
+        <button
+          :disabled="voteSubmitted"
+          class="button is-info"
+          @click="submitVote(option.id)"
+        >
+          Vote
+        </button>
+        <button
+          :disabled="!voteSubmitted"
+          class="button is-warning"
+          @click="removeVote(option.id)"
+        >
+          Undo
+        </button>
+      </li>
     </ul>
   </div>
 </template>
@@ -18,7 +34,8 @@ export default {
   data() {
     return {
       poll: {},
-      pollId: this.$route.params[0]
+      pollId: this.$route.params[0],
+      voteSubmitted: false
     }
   },
   apollo: {
@@ -29,6 +46,17 @@ export default {
           pid: this.pollId
         }
       }
+    }
+  },
+  methods: {
+    submitVote(id) {
+      this.voteSubmitted = true
+      console.log(id)
+    },
+    removeVote(id) {
+      // this needs to only disable the voted on option
+      this.voteSubmitted = false
+      console.log(id)
     }
   }
 }

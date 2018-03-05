@@ -57,7 +57,7 @@
             placeholder="Poll Option"
           >
           <button
-            class="button is-danger"
+            class="button is-danger input-button"
             type="button"
             tabindex="-1"
             @click="removeOption(index)"
@@ -96,6 +96,14 @@
         </p>
       </div>
 
+      <p
+        v-show="errorMessage"
+        class="help is-danger"
+      >
+        <i class="fas fa-exclamation-triangle" />
+        {{ errorMessage }}
+      </p>
+
     </div>
   </form>
 </template>
@@ -113,6 +121,7 @@ export default {
   data() {
     return {
       name: '',
+      errorMessage: '',
       options: [{ name: '' }, { name: '' }]
     }
   },
@@ -140,7 +149,7 @@ export default {
           this.$router.push(`/polls/${res.data.createPoll.id}`)
         }
       } catch (err) {
-        console.log(`Error: ${err}`)
+        this.errorMessage = 'Failed to create poll, please try again later'
       }
     },
     addOption() {

@@ -48,4 +48,8 @@ body {
 .hide {
   display: none !important;
 }
+
+.input-button {
+  margin-left: 8px;
+}
 </style>

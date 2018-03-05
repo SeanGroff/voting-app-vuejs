@@ -6,7 +6,7 @@
         v-for="(poll, index) in polls"
         :key="index"
         class="box"
-        @click="handleClick(poll)"
+        @click="$router.push(`/polls/${poll.id}`)"
       >
         <span>{{ poll.name }}</span>
         <button
