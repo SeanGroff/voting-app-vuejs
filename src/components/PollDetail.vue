@@ -9,14 +9,14 @@
       <li>
         {{ option.votes }}
         <button
-          :disabled="voteSubmitted"
+          :disabled="!!userVote.voter"
           class="button is-info"
           @click="submitVote(option.id)"
         >
           Vote
         </button>
         <button
-          :disabled="!voteSubmitted"
+          :disabled="userVote.choice !== option.id"
           class="button is-warning"
           @click="removeVote(option.id)"
         >
@@ -37,7 +37,11 @@ export default {
     return {
       poll: {},
       pollId: this.$route.params[0],
-      voteSubmitted: false
+      userVote: {
+        voter: '',
+        choice: ''
+      }
+      // voteSubmitted: false
     }
   },
   apollo: {
@@ -47,14 +51,19 @@ export default {
         return {
           pid: this.pollId
         }
+      },
+      result({ data }) {
+        this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
+          if (option.voters.find(voter => voter.id === this.userId())) {
+            return {
+              voter: option.voters[index].id,
+              choice: option.id
+            }
+          }
+          return accum
+        }, {})
       }
     }
-  },
-  updated() {
-    this.voteSubmitted = this.poll.pollOptions.reduce((accum, option) => {
-      if (option.voters.find(voter => voter.id === this.userId())) return true
-      return accum
-    }, false)
   },
   methods: {
     ...mapGetters(['userId']),
@@ -73,14 +82,20 @@ export default {
           }
         })
 
-        this.voteSubmitted = true
+        this.userVote = {
+          voter: this.userId(),
+          choice: id
+        }
       } catch (err) {
         console.log(err)
       }
     },
     removeVote(id) {
-      // this needs to only disable the voted on option
-      this.voteSubmitted = false
+      // @to-do Mutation to remove vote from Mongo
+      this.userVote = {
+        voter: '',
+        choice: ''
+      }
     }
   }
 }
