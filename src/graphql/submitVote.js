@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost'
 
 export default gql`
-  query getPoll($pid: String!) {
-    poll(pid: $pid) {
+  mutation submitVote($pollId: String!, $pollOption: PollOptionVoteInput!) {
+    vote(pollId: $pollId, pollOption: $pollOption) {
       id
       createdBy {
         id

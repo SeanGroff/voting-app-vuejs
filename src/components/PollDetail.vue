@@ -28,7 +28,9 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import getPoll from '@/graphql/getPoll'
+import submitVote from '@/graphql/submitVote'
 
 export default {
   data() {
@@ -48,15 +50,37 @@ export default {
       }
     }
   },
+  updated() {
+    this.voteSubmitted = this.poll.pollOptions.reduce((accum, option) => {
+      if (option.voters.find(voter => voter.id === this.userId())) return true
+      return accum
+    }, false)
+  },
   methods: {
-    submitVote(id) {
-      this.voteSubmitted = true
-      console.log(id)
+    ...mapGetters(['userId']),
+    async submitVote(id) {
+      try {
+        this.$apollo.mutate({
+          mutation: submitVote,
+          variables: {
+            pollId: this.pollId,
+            pollOption: {
+              id,
+              voter: {
+                id: this.userId()
+              }
+            }
+          }
+        })
+
+        this.voteSubmitted = true
+      } catch (err) {
+        console.log(err)
+      }
     },
     removeVote(id) {
       // this needs to only disable the voted on option
       this.voteSubmitted = false
-      console.log(id)
     }
   }
 }

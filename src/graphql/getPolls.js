@@ -16,6 +16,9 @@ export default gql`
         id
         name
         votes
+        voters {
+          id
+        }
       }
     }
   }
