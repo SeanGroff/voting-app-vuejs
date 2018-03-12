@@ -24,24 +24,100 @@
         </button>
       </li>
     </ul>
+    <div>
+      <button
+        class="button is-success"
+        @click="isOpen = true"
+      >
+        Add New Option
+      </button>
+    </div>
+    <div
+      :class="{ 'is-active': isOpen }"
+      class="modal"
+    >
+      <div class="modal-background" />
+      <div class="modal-content">
+        <form @submit.prevent="addNewOption">
+          <div class="field">
+            <label
+              class="label"
+              for="newOption">
+              New Option
+            </label>
+            <div class="control has-icons-left">
+              <input
+                v-model="newOption"
+                :class="{ 'is-danger': $v.newOption.$error }"
+                class="input"
+                placeholder="New voting option"
+                type="text"
+                autofocus
+                @input="$v.newOption.$touch"
+              >
+              <span class="icon is-small is-left">
+                <i class="fas fa-plus" />
+              </span>
+            </div>
+            <div v-show="$v.newOption.$error">
+              <p
+                v-show="!$v.newOption.required"
+                class="help is-danger"
+              >
+                <i class="fas fa-exclamation-triangle" />
+                {{ 'New option required' }}
+              </p>
+            </div>
+          </div>
+          <button
+            :disabled="isDisabled"
+            class="button is-success is-large"
+            aria-label="add"
+            type="submit"
+          >
+            Add
+          </button>
+        </form>
+      </div>
+      <button
+        class="modal-close is-large"
+        aria-label="close"
+        @click="isOpen = false"
+      />
+    </div>
+    <base-bar-chart :data="dataCollection" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import { required } from 'vuelidate/lib/validators'
+import BaseBarChart from '@/components/BaseBarChart'
 import getPoll from '@/graphql/getPoll'
 import submitVote from '@/graphql/submitVote'
+import undoVote from '@/graphql/undoVote'
+import addOption from '@/graphql/addOption'
 
 export default {
+  components: {
+    BaseBarChart
+  },
   data() {
     return {
+      dataCollection: {},
+      isOpen: false,
+      newOption: '',
       poll: {},
       pollId: this.$route.params[0],
       userVote: {
         voter: '',
         choice: ''
       }
-      // voteSubmitted: false
+    }
+  },
+  validations: {
+    newOption: {
+      required
     }
   },
   apollo: {
@@ -62,7 +138,13 @@ export default {
           }
           return accum
         }, {})
+        this.fillData()
       }
+    }
+  },
+  computed: {
+    isDisabled() {
+      return this.$v.$invalid
     }
   },
   methods: {
@@ -91,10 +173,54 @@ export default {
       }
     },
     removeVote(id) {
-      // @to-do Mutation to remove vote from Mongo
-      this.userVote = {
-        voter: '',
-        choice: ''
+      try {
+        this.$apollo.mutate({
+          mutation: undoVote,
+          variables: {
+            pollId: this.pollId,
+            pollOption: {
+              id,
+              voter: {
+                id: this.userId()
+              }
+            }
+          }
+        })
+
+        this.userVote = {
+          voter: '',
+          choice: ''
+        }
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    addNewOption() {
+      try {
+        this.$apollo.mutate({
+          mutation: addOption,
+          variables: {
+            pollId: this.pollId,
+            optionName: this.newOption
+          }
+        })
+
+        this.newOption = ''
+        this.newOption = ''
+        this.$v.$reset()
+        this.isOpen = false
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    fillData() {
+      this.dataCollection = {
+        labels: this.poll.pollOptions.map(option => option.name),
+        datasets: this.poll.pollOptions.map(option => ({
+          label: option.name,
+          backgroundColor: '#f87979',
+          data: option.votes
+        }))
       }
     }
   }
