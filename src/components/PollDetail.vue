@@ -216,11 +216,13 @@ export default {
     fillData() {
       this.dataCollection = {
         labels: this.poll.pollOptions.map(option => option.name),
-        datasets: this.poll.pollOptions.map(option => ({
-          label: option.name,
-          backgroundColor: '#f87979',
-          data: option.votes
-        }))
+        datasets: [
+          {
+            label: this.poll.name,
+            backgroundColor: '#ff3860',
+            data: this.poll.pollOptions.map(option => option.votes)
+          }
+        ]
       }
     }
   }

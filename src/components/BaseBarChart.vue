@@ -20,7 +20,6 @@ export default {
   },
   watch: {
     data() {
-      this.$data._chart.destroy()
       this.renderChart(this.data, this.options)
     }
   },
