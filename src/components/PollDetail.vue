@@ -32,6 +32,24 @@
         Add New Option
       </button>
     </div>
+
+    <div>
+      <button
+        class="button is-danger"
+        @click="deletePoll"
+      >
+        Delete Poll
+      </button>
+    </div>
+
+    <p
+      v-show="error"
+      class="help is-danger"
+    >
+      <i class="fas fa-exclamation-triangle" />
+      {{ error }}
+    </p>
+
     <div
       :class="{ 'is-active': isOpen }"
       class="modal"
@@ -97,6 +115,8 @@ import getPoll from '@/graphql/getPoll'
 import submitVote from '@/graphql/submitVote'
 import undoVote from '@/graphql/undoVote'
 import addOption from '@/graphql/addOption'
+import deletePoll from '@/graphql/deletePoll'
+import getPolls from '@/graphql/getPolls'
 
 export default {
   components: {
@@ -105,6 +125,7 @@ export default {
   data() {
     return {
       dataCollection: {},
+      error: '',
       isOpen: false,
       newOption: '',
       poll: {},
@@ -151,7 +172,7 @@ export default {
     ...mapGetters(['userId']),
     async submitVote(id) {
       try {
-        this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: submitVote,
           variables: {
             pollId: this.pollId,
@@ -172,9 +193,9 @@ export default {
         console.log(err)
       }
     },
-    removeVote(id) {
+    async removeVote(id) {
       try {
-        this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: undoVote,
           variables: {
             pollId: this.pollId,
@@ -195,9 +216,9 @@ export default {
         console.log(err)
       }
     },
-    addNewOption() {
+    async addNewOption() {
       try {
-        this.$apollo.mutate({
+        await this.$apollo.mutate({
           mutation: addOption,
           variables: {
             pollId: this.pollId,
@@ -211,6 +232,30 @@ export default {
         this.isOpen = false
       } catch (err) {
         console.log(err)
+      }
+    },
+    async deletePoll() {
+      try {
+        await this.$apollo.mutate({
+          mutation: deletePoll,
+          variables: {
+            pollId: this.pollId
+          },
+          update: (store, { data: { removePoll } }) => {
+            const data = store.readQuery({ query: getPolls })
+
+            data.polls = data.polls.filter(poll => poll.id !== this.pollId)
+
+            store.writeQuery({ query: getPolls, data })
+
+            this.$router.push('/')
+          }
+        })
+      } catch (err) {
+        this.error = 'Not Authenticated. Redirecting to login...'
+        setTimeout(() => {
+          this.$router.replace('/login')
+        }, 3000)
       }
     },
     fillData() {
