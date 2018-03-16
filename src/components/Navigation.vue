@@ -67,6 +67,13 @@
                 New
               </router-link>
             </div>
+            <a
+              :class="{'hide': !isAuthorized}"
+              class="navbar-router-link"
+              @click="handleLogoutClick"
+            >
+              Logout
+            </a>
           </div>
         </div>
       </div>
@@ -85,6 +92,11 @@ export default {
   },
   computed: {
     ...mapGetters(['isAuthorized'])
+  },
+  methods: {
+    handleLogoutClick() {
+      console.log('logout click')
+    }
   }
 }
 </script>

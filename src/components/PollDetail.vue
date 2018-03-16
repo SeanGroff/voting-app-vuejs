@@ -3,6 +3,7 @@
     <h1 class="title">{{ poll.name }}</h1>
 
     <social-sharing
+      v-show="isAuthorized()"
       :title="poll.name"
       hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
       twitter-user="_SeanGroff"
@@ -41,6 +42,7 @@
     </ul>
     <div>
       <button
+        v-show="isAuthorized()"
         class="button is-success"
         @click="isOpen = true"
       >
@@ -48,8 +50,9 @@
       </button>
     </div>
 
-    <div>
+    <div v-if="poll && poll.createdBy && poll.createdBy.id">
       <button
+        v-show="isAuthorized && userId() === poll.createdBy.id"
         class="button is-danger"
         @click="deletePoll"
       >
@@ -165,11 +168,18 @@ export default {
         }
       },
       result({ data }) {
+        console.log(data)
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
           if (option.voters.find(voter => voter.id === this.userId())) {
             return {
-              voter: option.voters[index].id,
-              choice: option.id
+              voter:
+                option &&
+                option.voters &&
+                option.voters[index] &&
+                option.voters[index].id
+                  ? option.voters[index].id
+                  : '',
+              choice: option && option.id ? option.id : ''
             }
           }
           return accum
@@ -183,8 +193,11 @@ export default {
       return this.$v.$invalid
     }
   },
+  mounted() {
+    console.log('verify jwt is valid')
+  },
   methods: {
-    ...mapGetters(['userId']),
+    ...mapGetters(['userId', 'isAuthorized']),
     async submitVote(id) {
       try {
         await this.$apollo.mutate({
@@ -200,10 +213,10 @@ export default {
           }
         })
 
-        this.userVote = {
-          voter: this.userId(),
-          choice: id
-        }
+        // this.userVote = {
+        //   voter: this.userId(),
+        //   choice: id
+        // }
       } catch (err) {
         console.log(err)
       }
@@ -220,13 +233,31 @@ export default {
                 id: this.userId()
               }
             }
+          },
+          update: (store, { data: { removeVote } }) => {
+            const data = store.readQuery({ query: getPoll })
+
+            data.poll.pollOptions = data.poll.pollOptions.reduce(
+              (accum, option, index) => {
+                if (option.voters.find(voter => voter.id === this.userId())) {
+                  return {
+                    voter: '',
+                    choice: ''
+                  }
+                }
+                return accum
+              },
+              {}
+            )
+
+            store.writeQuery({ query: getPoll, data })
+
+            // this.userVote = {
+            //   voter: '',
+            //   choice: ''
+            // }
           }
         })
-
-        this.userVote = {
-          voter: '',
-          choice: ''
-        }
       } catch (err) {
         console.log(err)
       }
