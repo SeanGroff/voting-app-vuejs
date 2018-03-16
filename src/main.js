@@ -3,12 +3,14 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import Vuelidate from 'vuelidate'
+import SocialSharing from 'vue-social-sharing'
 import App from '@/App'
 import router from '@/router'
 import { store } from '@/store'
 import { apolloClient } from '@/graphql/apolloClient'
 
 Vue.use(Vuelidate)
+Vue.use(SocialSharing)
 
 const apolloProvider = new VueApollo({
   defaultClient: apolloClient

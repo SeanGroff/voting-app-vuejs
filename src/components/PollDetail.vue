@@ -1,6 +1,21 @@
 <template>
   <div class="is-centered">
     <h1 class="title">{{ poll.name }}</h1>
+
+    <social-sharing
+      :title="poll.name"
+      hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
+      twitter-user="_SeanGroff"
+      inline-template
+    >
+      <button class="button is-link is-small">
+        <network network="twitter">
+          <i class="fab fa-twitter-square" />
+          Share
+        </network>
+      </button>
+    </social-sharing>
+
     <ul
       v-for="(option, index) in poll.pollOptions"
       :key="index"
