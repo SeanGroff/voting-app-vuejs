@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
 import BaseBarChart from '@/components/BaseBarChart'
 import getPoll from '@/graphql/getPoll'
@@ -168,7 +168,6 @@ export default {
         }
       },
       result({ data }) {
-        console.log(data)
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
           if (option.voters.find(voter => voter.id === this.userId())) {
             return {
@@ -193,11 +192,17 @@ export default {
       return this.$v.$invalid
     }
   },
-  mounted() {
-    console.log('verify jwt is valid')
+  async mounted() {
+    try {
+      const token = this.userToken()
+      await this.checkAuthorization(token)
+    } catch (err) {
+      console.log(err)
+    }
   },
   methods: {
-    ...mapGetters(['userId', 'isAuthorized']),
+    ...mapActions(['checkAuthorization']),
+    ...mapGetters(['userId', 'isAuthorized', 'userToken']),
     async submitVote(id) {
       try {
         await this.$apollo.mutate({

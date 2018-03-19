@@ -3,24 +3,29 @@ import Vuex from 'vuex'
 import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
 
+axios.defaults.baseURL =
+  process.env.NODE_ENV === 'production' ? 'unknown' : 'http://localhost:3000'
+
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
-    loggedIn: !!localStorage.getItem('token'),
+    loggedIn: false,
     user: {
       id: '',
       name: '',
       email: ''
     },
     error: '',
-    loading: false
+    loading: false,
+    token: ''
   },
   getters: {
     user: state => state.user,
     userId: state => state.user.id,
     username: state => state.user.email,
+    userToken: state => state.token,
     isAuthorized: state => state.loggedIn,
     errorMessage: state => state.error,
     loadingStatus: state => state.loading
@@ -31,6 +36,7 @@ export const store = new Vuex.Store({
     },
     AUTH_FAILURE: (state, payload) => {
       state.error = payload
+      state.loggedIn = false
       state.loading = false
     },
     AUTH_SUCCESS: (state, payload) => {
@@ -41,11 +47,18 @@ export const store = new Vuex.Store({
     },
     setErrorMessage: (state, payload) => {
       state.error = payload
+    },
+    setToken: (state, payload) => {
+      state.token = payload
     }
   },
   actions: {
     updateErrorMessage: ({ commit }, payload) => {
       commit('setErrorMessage', payload)
+      return payload
+    },
+    updateToken: ({ commit }, payload) => {
+      commit('setToken', payload)
       return payload
     },
     registerCurrentUser: async (
@@ -68,7 +81,7 @@ export const store = new Vuex.Store({
           email: data.email
         })
 
-        return { ...data, error: null }
+        return { ...data, error: '' }
       } catch (err) {
         commit('AUTH_FAILURE', err.response.data)
         return { error: err.response.data }
@@ -89,10 +102,30 @@ export const store = new Vuex.Store({
           email: data.email
         })
 
-        return { ...data, error: null }
+        return { ...data, error: '' }
       } catch (err) {
         commit('AUTH_FAILURE', err.response.data)
         return { error: err.response.data }
+      }
+    },
+    checkAuthorization: async ({ commit, state }, token) => {
+      commit('AUTH_PENDING')
+
+      try {
+        const { data } = await axios.get('/secret', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        commit('AUTH_SUCCESS', {
+          ...state.user
+        })
+
+        return { authorized: data.authorized, error: '' }
+      } catch (err) {
+        commit('AUTH_FAILURE', 'Not Authorized')
+        return { error: 'Not Authorized' }
       }
     }
   }

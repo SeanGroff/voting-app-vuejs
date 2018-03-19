@@ -251,7 +251,7 @@ export default {
     this.updateErrorMessage('')
   },
   methods: {
-    ...mapActions(['registerCurrentUser', 'updateErrorMessage']),
+    ...mapActions(['registerCurrentUser', 'updateErrorMessage', 'updateToken']),
     async handleSubmit() {
       if (this.$v.$invalid) return
 
@@ -265,11 +265,7 @@ export default {
       })
 
       if (!res.error) {
-        if (localStorage.getItem('token')) {
-          localStorage.removeItem('token')
-        }
-
-        localStorage.setItem('token', res.token)
+        this.updateToken(res.token)
         this.$router.push('/')
       }
     }
