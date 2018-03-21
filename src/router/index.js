@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Polls from '@/components/Polls'
+import MyPolls from '@/components/MyPolls'
 import SignUpForm from '@/components/SignUpForm'
 import Login from '@/components/LoginForm'
 import NewPoll from '@/components/NewPoll'
@@ -36,6 +37,11 @@ export default new Router({
       path: '/polls/*',
       name: 'PollDetail',
       component: PollDetail
+    },
+    {
+      path: '/mypolls',
+      name: 'MyPolls',
+      component: MyPolls
     }
   ]
 })

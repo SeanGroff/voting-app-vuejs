@@ -2,7 +2,7 @@
   <div id="app">
     <navigation />
     <base-hero />
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
