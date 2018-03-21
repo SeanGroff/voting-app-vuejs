@@ -36,15 +36,13 @@ export default {
     ...mapGetters(['isAuthorized', 'userId', 'userToken'])
   },
   async mounted() {
-    try {
-      const token = this.userToken
+    const token = this.userToken
 
-      await this.checkAuthorization(token)
+    const { error } = await this.checkAuthorization(token)
 
-      await this.$apollo.queries.polls.refetch({ uid: this.userId })
-    } catch (err) {
-      this.$router.replace('/login')
-    }
+    error
+      ? this.$router.replace('/login')
+      : this.$apollo.queries.polls.refetch({ uid: this.userId })
   },
   methods: {
     ...mapActions(['checkAuthorization'])
