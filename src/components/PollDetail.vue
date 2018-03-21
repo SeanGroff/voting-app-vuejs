@@ -169,14 +169,14 @@ export default {
       },
       result({ data }) {
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
-          if (option.voters.find(voter => voter.id === this.userId())) {
+          if (option.voters.find(voter => voter.ip === this.userIp())) {
             return {
               voter:
                 option &&
                 option.voters &&
                 option.voters[index] &&
-                option.voters[index].id
-                  ? option.voters[index].id
+                option.voters[index].ip
+                  ? option.voters[index].ip
                   : '',
               choice: option && option.id ? option.id : ''
             }
@@ -202,7 +202,7 @@ export default {
   },
   methods: {
     ...mapActions(['checkAuthorization']),
-    ...mapGetters(['userId', 'isAuthorized', 'userToken']),
+    ...mapGetters(['userId', 'userIp', 'isAuthorized', 'userToken']),
     async submitVote(id) {
       try {
         await this.$apollo.mutate({
@@ -212,16 +212,11 @@ export default {
             pollOption: {
               id,
               voter: {
-                id: this.userId()
+                ip: this.userIp()
               }
             }
           }
         })
-
-        // this.userVote = {
-        //   voter: this.userId(),
-        //   choice: id
-        // }
       } catch (err) {
         console.log(err)
       }
@@ -235,7 +230,7 @@ export default {
             pollOption: {
               id,
               voter: {
-                id: this.userId()
+                ip: this.userIp()
               }
             }
           },
@@ -244,7 +239,7 @@ export default {
 
             data.poll.pollOptions = data.poll.pollOptions.reduce(
               (accum, option, index) => {
-                if (option.voters.find(voter => voter.id === this.userId())) {
+                if (option.voters.find(voter => voter.ip === this.userIp())) {
                   return {
                     voter: '',
                     choice: ''
@@ -256,11 +251,6 @@ export default {
             )
 
             store.writeQuery({ query: getPoll, data })
-
-            // this.userVote = {
-            //   voter: '',
-            //   choice: ''
-            // }
           }
         })
       } catch (err) {

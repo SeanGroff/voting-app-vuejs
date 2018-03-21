@@ -8,6 +8,7 @@ export default gql`
         id
         name
         email
+        ip
       }
       name
       votes
@@ -17,7 +18,7 @@ export default gql`
         name
         votes
         voters {
-          id
+          ip
         }
       }
     }

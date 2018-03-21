@@ -15,7 +15,8 @@ export const store = new Vuex.Store({
     user: {
       id: '',
       name: '',
-      email: ''
+      email: '',
+      ip: ''
     },
     error: '',
     loading: false,
@@ -24,6 +25,7 @@ export const store = new Vuex.Store({
   getters: {
     user: state => state.user,
     userId: state => state.user.id,
+    userIp: state => state.user.ip,
     username: state => state.user.email,
     userToken: state => state.token,
     isAuthorized: state => state.loggedIn,
@@ -78,7 +80,8 @@ export const store = new Vuex.Store({
         commit('AUTH_SUCCESS', {
           id: data.uid,
           name: data.name,
-          email: data.email
+          email: data.email,
+          ip: data.ip
         })
 
         return { ...data, error: '' }
@@ -99,7 +102,8 @@ export const store = new Vuex.Store({
         commit('AUTH_SUCCESS', {
           id: data.uid,
           name: data.name,
-          email: data.email
+          email: data.email,
+          ip: data.ip
         })
 
         return { ...data, error: '' }
