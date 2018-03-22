@@ -149,7 +149,6 @@ export default {
       poll: {},
       pollId: this.$route.params[0],
       userVote: {
-        voter: '',
         choice: ''
       }
     }
@@ -171,13 +170,6 @@ export default {
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
           if (option.voters.find(voter => voter.ip === this.userIp())) {
             return {
-              voter:
-                option &&
-                option.voters &&
-                option.voters[index] &&
-                option.voters[index].ip
-                  ? option.voters[index].ip
-                  : '',
               choice: option && option.id ? option.id : ''
             }
           }
@@ -196,6 +188,13 @@ export default {
     try {
       const token = this.userToken()
       await this.checkAuthorization(token)
+
+      // get current users ip and set vuex userIp state
+
+      this.poll.pollOptions.forEach(option => {
+        const voterIp = option.voters.find(voter => voter.ip === this.userIp());
+        this.userVote.choice = option.id;
+        });
     } catch (err) {
       console.log(err)
     }
@@ -210,13 +209,15 @@ export default {
           variables: {
             pollId: this.pollId,
             pollOption: {
-              id,
-              voter: {
-                ip: this.userIp()
-              }
+              id
             }
           }
         })
+
+        this.userVote = {
+          voter: this.userIp(),
+          choice: id
+        }
       } catch (err) {
         console.log(err)
       }
@@ -228,29 +229,8 @@ export default {
           variables: {
             pollId: this.pollId,
             pollOption: {
-              id,
-              voter: {
-                ip: this.userIp()
-              }
+              id
             }
-          },
-          update: (store, { data: { removeVote } }) => {
-            const data = store.readQuery({ query: getPoll })
-
-            data.poll.pollOptions = data.poll.pollOptions.reduce(
-              (accum, option, index) => {
-                if (option.voters.find(voter => voter.ip === this.userIp())) {
-                  return {
-                    voter: '',
-                    choice: ''
-                  }
-                }
-                return accum
-              },
-              {}
-            )
-
-            store.writeQuery({ query: getPoll, data })
           }
         })
       } catch (err) {
