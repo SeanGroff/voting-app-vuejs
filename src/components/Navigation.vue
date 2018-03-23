@@ -60,7 +60,9 @@
             >
               My Polls
             </router-link>
-            <div class="navbar-dropdown is-boxed">
+            <div
+              :class="{'hide': !isAuthorized}"
+              class="navbar-dropdown is-boxed">
               <router-link
                 class="navbar-item"
                 to="/new">

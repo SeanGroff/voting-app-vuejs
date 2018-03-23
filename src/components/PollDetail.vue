@@ -25,7 +25,7 @@
       <li>
         {{ option.votes }}
         <button
-          :disabled="!!userVote.voter"
+          :disabled="Boolean(userVote.choice)"
           class="button is-info"
           @click="submitVote(option.id)"
         >
@@ -167,6 +167,7 @@ export default {
         }
       },
       result({ data }) {
+        console.log(data)
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
           if (option.voters.find(voter => voter.ip === this.userIp())) {
             return {
@@ -175,6 +176,7 @@ export default {
           }
           return accum
         }, {})
+
         this.fillData()
       }
     }
@@ -190,17 +192,21 @@ export default {
       await this.checkAuthorization(token)
 
       // get current users ip and set vuex userIp state
+      await this.updateIpAddress()
 
       this.poll.pollOptions.forEach(option => {
-        const voterIp = option.voters.find(voter => voter.ip === this.userIp());
-        this.userVote.choice = option.id;
-        });
+        const voterIp = option.voters.find(voter => voter.ip === this.userIp())
+
+        if (voterIp) {
+          this.userVote.choice = option.id
+        }
+      })
     } catch (err) {
       console.log(err)
     }
   },
   methods: {
-    ...mapActions(['checkAuthorization']),
+    ...mapActions(['checkAuthorization', 'updateIpAddress']),
     ...mapGetters(['userId', 'userIp', 'isAuthorized', 'userToken']),
     async submitVote(id) {
       try {
@@ -212,10 +218,33 @@ export default {
               id
             }
           }
+          // update: (store, { data: { vote } }) => {
+          //   const data = store.readQuery({
+          //     query: getPoll,
+          //     variables: {
+          //       pid: this.pollId
+          //     }
+          //   })
+
+          //   data.poll.pollOptions = data.poll.pollOptions.map(
+          //     (option, index) => {
+          //       if (String(option.id) !== String(id)) return option
+
+          //       return {
+          //         ...option,
+          //         voters: [
+          //           ...option.voters,
+          //           { __typename: 'Voter', ip: this.userIp() }
+          //         ]
+          //       }
+          //     }
+          //   )
+
+          //   store.writeQuery({ query: getPoll, data })
+          // }
         })
 
         this.userVote = {
-          voter: this.userIp(),
           choice: id
         }
       } catch (err) {
@@ -232,7 +261,36 @@ export default {
               id
             }
           }
+          // update: (store, { data: { removeVote } }) => {
+          //   const data = store.readQuery({
+          //     query: getPoll,
+          //     variables: {
+          //       pollId: this.pollId
+          //     }
+          //   })
+
+          //   data.poll.pollOptions = data.poll.pollOptions.map(
+          //     (option, index) => {
+          //       if (String(option.id) !== String(id)) return option
+
+          //       option.voters.splice(index, 1)
+          //       return option
+          //       // return {
+          //       //   ...option,
+          //       //   voters: [
+          //       //     ...option.voters.slice(0, index),
+          //       //     ...option.voters.slice(index + 1)
+          //       //   ]
+          //       // }
+          //     }
+          //   )
+          //   // }
+
+          //   store.writeQuery({ query: getPoll, data })
+          // }
         })
+
+        this.userVote.choice = ''
       } catch (err) {
         console.log(err)
       }
@@ -247,7 +305,6 @@ export default {
           }
         })
 
-        this.newOption = ''
         this.newOption = ''
         this.$v.$reset()
         this.isOpen = false

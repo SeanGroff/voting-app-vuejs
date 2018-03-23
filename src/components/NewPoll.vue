@@ -146,10 +146,7 @@ export default {
           },
           update: (store, { data: { createPoll } }) => {
             // get the data from the store
-            const data = store.readQuery({
-              query: getPolls,
-              variables: { userId: this.userId }
-            })
+            const data = store.readQuery({ query: getPolls })
 
             // push new poll to the data
             data.polls.push(createPoll)

@@ -47,6 +47,18 @@ export const store = new Vuex.Store({
       state.error = ''
       state.loading = false
     },
+    IP_PENDING: state => {
+      state.loading = true
+    },
+    IP_SUCCESS: (state, payload) => {
+      state.user.ip = payload
+      state.error = ''
+      state.loading = false
+    },
+    IP_FAILURE: (state, payload) => {
+      state.error = 'Failed to fetch IP address'
+      state.loading = false
+    },
     setErrorMessage: (state, payload) => {
       state.error = payload
     },
@@ -58,6 +70,16 @@ export const store = new Vuex.Store({
     updateErrorMessage: ({ commit }, payload) => {
       commit('setErrorMessage', payload)
       return payload
+    },
+    updateIpAddress: async ({ commit }) => {
+      commit('IP_PENDING')
+      try {
+        const { data } = await axios.get('/ip')
+        commit('IP_SUCCESS', data.ip)
+      } catch (err) {
+        commit('IP_FAILURE')
+        return { error: err.response.data }
+      }
     },
     updateToken: ({ commit }, payload) => {
       commit('setToken', payload)
