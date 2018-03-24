@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import { required } from 'vuelidate/lib/validators'
 import BaseHeader from '@/components/BaseHeader'
 import createPoll from '@/graphql/createPoll'
@@ -127,12 +127,22 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'userId']),
+    ...mapGetters(['user', 'userId', 'userToken']),
     isDisabled() {
       return this.$v.$invalid || this.options.length < 2
     }
   },
+  async mounted() {
+    const token = this.userToken
+
+    const { error } = await this.checkAuthorization(token)
+
+    if (error) {
+      this.$router.replace('/login')
+    }
+  },
   methods: {
+    ...mapActions(['checkAuthorization']),
     async handleSubmit() {
       if (this.$v.$invalid) return
 
@@ -145,13 +155,10 @@ export default {
             pollOptions: this.options
           },
           update: (store, { data: { createPoll } }) => {
-            // get the data from the store
             const data = store.readQuery({ query: getPolls })
 
-            // push new poll to the data
             data.polls.push(createPoll)
 
-            // write the updated data to the cache
             store.writeQuery({ query: getPolls, data })
           }
         })

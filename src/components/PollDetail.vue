@@ -167,7 +167,6 @@ export default {
         }
       },
       result({ data }) {
-        console.log(data)
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
           if (option.voters.find(voter => voter.ip === this.userIp())) {
             return {
@@ -218,30 +217,6 @@ export default {
               id
             }
           }
-          // update: (store, { data: { vote } }) => {
-          //   const data = store.readQuery({
-          //     query: getPoll,
-          //     variables: {
-          //       pid: this.pollId
-          //     }
-          //   })
-
-          //   data.poll.pollOptions = data.poll.pollOptions.map(
-          //     (option, index) => {
-          //       if (String(option.id) !== String(id)) return option
-
-          //       return {
-          //         ...option,
-          //         voters: [
-          //           ...option.voters,
-          //           { __typename: 'Voter', ip: this.userIp() }
-          //         ]
-          //       }
-          //     }
-          //   )
-
-          //   store.writeQuery({ query: getPoll, data })
-          // }
         })
 
         this.userVote = {
@@ -261,33 +236,6 @@ export default {
               id
             }
           }
-          // update: (store, { data: { removeVote } }) => {
-          //   const data = store.readQuery({
-          //     query: getPoll,
-          //     variables: {
-          //       pollId: this.pollId
-          //     }
-          //   })
-
-          //   data.poll.pollOptions = data.poll.pollOptions.map(
-          //     (option, index) => {
-          //       if (String(option.id) !== String(id)) return option
-
-          //       option.voters.splice(index, 1)
-          //       return option
-          //       // return {
-          //       //   ...option,
-          //       //   voters: [
-          //       //     ...option.voters.slice(0, index),
-          //       //     ...option.voters.slice(index + 1)
-          //       //   ]
-          //       // }
-          //     }
-          //   )
-          //   // }
-
-          //   store.writeQuery({ query: getPoll, data })
-          // }
         })
 
         this.userVote.choice = ''
