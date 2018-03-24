@@ -84,6 +84,7 @@
         </p>
         <p class="control">
           <button
+            :class="{ 'is-loading': loadingStatus }"
             :disabled="isDisabled"
             class="button is-success"
             type="submit"
@@ -127,7 +128,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['user', 'userId', 'userToken']),
+    ...mapGetters(['user', 'userId', 'userToken', 'loadingStatus']),
     isDisabled() {
       return this.$v.$invalid || this.options.length < 2
     }
