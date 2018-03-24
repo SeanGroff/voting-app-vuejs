@@ -3,7 +3,7 @@
     <base-header>My Polls</base-header>
     <base-polls-list
       :polls="polls"
-      :user-id="userId"
+      :user-ip="userIp"
     />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['isAuthorized', 'userId', 'userToken'])
+    ...mapGetters(['isAuthorized', 'userId', 'userIp', 'userToken'])
   },
   async mounted() {
     const token = this.userToken

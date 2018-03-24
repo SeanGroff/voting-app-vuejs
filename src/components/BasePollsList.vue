@@ -8,7 +8,7 @@
     >
       <span>{{ poll.name }}</span>
       <button
-        v-show="poll.createdBy.id === userId"
+        v-show="poll.createdBy.ip === userIp"
         class="delete is-danger"
       >
         Delete
@@ -26,7 +26,7 @@ export default {
         return []
       }
     },
-    userId: {
+    userIp: {
       type: String,
       default: ''
     }
