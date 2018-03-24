@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
+import { apolloClient } from '@/graphql/apolloClient'
 
 axios.defaults.baseURL =
   process.env.NODE_ENV === 'production' ? 'unknown' : 'http://localhost:3000'
@@ -47,6 +48,25 @@ export const store = new Vuex.Store({
       state.error = ''
       state.loading = false
     },
+    LOGOUT_PENDING: state => {
+      state.loading = true
+    },
+    LOGOUT_FAILURE: state => {
+      state.error = 'Failed to logout'
+      state.loading = false
+    },
+    LOGOUT_SUCCESS: state => {
+      state.user = {
+        id: '',
+        name: '',
+        email: '',
+        ip: ''
+      }
+      state.token = ''
+      state.loggedIn = false
+      state.error = ''
+      state.loading = false
+    },
     IP_PENDING: state => {
       state.loading = true
     },
@@ -55,7 +75,7 @@ export const store = new Vuex.Store({
       state.error = ''
       state.loading = false
     },
-    IP_FAILURE: (state, payload) => {
+    IP_FAILURE: state => {
       state.error = 'Failed to fetch IP address'
       state.loading = false
     },
@@ -92,6 +112,8 @@ export const store = new Vuex.Store({
       commit('AUTH_PENDING')
 
       try {
+        apolloClient.resetStore()
+
         const { data } = await axios.post('/signup', {
           name,
           email,
@@ -116,6 +138,8 @@ export const store = new Vuex.Store({
       commit('AUTH_PENDING')
 
       try {
+        apolloClient.resetStore()
+
         const { data } = await axios.post('/login', {
           email,
           password
@@ -131,6 +155,23 @@ export const store = new Vuex.Store({
         return { ...data, error: '' }
       } catch (err) {
         commit('AUTH_FAILURE', err.response.data)
+        return { error: err.response.data }
+      }
+    },
+    logoutCurrentUser: async ({ commit }) => {
+      commit('LOGOUT_PENDING')
+
+      try {
+        const { data } = await axios.post('/logout')
+
+        apolloClient.resetStore()
+
+        commit('LOGOUT_SUCCESS')
+
+        return { ...data, error: '' }
+      } catch (err) {
+        commit('LOGOUT_FAILURE')
+
         return { error: err.response.data }
       }
     },

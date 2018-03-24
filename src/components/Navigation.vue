@@ -54,8 +54,7 @@
           >
             <router-link
               :class="{'hide': !isAuthorized}"
-              class="navbar-router-link"
-              style="margin: auto"
+              class="navbar-router-link navbar-dropdown-link"
               to="/mypolls"
             >
               My Polls
@@ -71,7 +70,7 @@
             </div>
             <a
               :class="{'hide': !isAuthorized}"
-              class="navbar-router-link"
+              class="navbar-router-link navbar-dropdown-link"
               @click="handleLogoutClick"
             >
               Logout
@@ -84,7 +83,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   data() {
@@ -96,13 +95,24 @@ export default {
     ...mapGetters(['isAuthorized'])
   },
   methods: {
-    handleLogoutClick() {
-      console.log('logout click')
+    ...mapActions(['logoutCurrentUser']),
+    async handleLogoutClick() {
+      try {
+        const res = await this.logoutCurrentUser()
+
+        if (res.success) {
+          this.$router.replace('/login')
+        }
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.navbar-dropdown-link {
+  margin: 16px;
+}
 </style>
