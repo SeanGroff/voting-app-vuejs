@@ -3,7 +3,7 @@
     <base-header>My Polls</base-header>
     <base-polls-list
       :polls="polls"
-      :user-ip="userIp"
+      :user-id="userId"
     />
   </div>
 </template>

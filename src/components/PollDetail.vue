@@ -3,7 +3,7 @@
     <h1 class="title">{{ poll.name }}</h1>
 
     <social-sharing
-      v-show="isAuthorized()"
+      v-show="isAuthorized"
       :title="poll.name"
       hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
       twitter-user="_SeanGroff"
@@ -42,7 +42,7 @@
     </ul>
     <div>
       <button
-        v-show="isAuthorized()"
+        v-show="isAuthorized"
         class="button is-success"
         @click="isOpen = true"
       >
@@ -52,7 +52,7 @@
 
     <div v-if="poll && poll.createdBy && poll.createdBy.id">
       <button
-        v-show="isAuthorized && userId() === poll.createdBy.id"
+        v-show="isAuthorized && userId === poll.createdBy.id"
         class="button is-danger"
         @click="deletePoll"
       >
@@ -168,7 +168,7 @@ export default {
       },
       result({ data }) {
         this.userVote = data.poll.pollOptions.reduce((accum, option, index) => {
-          if (option.voters.find(voter => voter.ip === this.userIp())) {
+          if (option.voters.find(voter => voter.ip === this.userIp)) {
             return {
               choice: option && option.id ? option.id : ''
             }
@@ -181,20 +181,20 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userId', 'userIp', 'isAuthorized', 'userToken']),
     isDisabled() {
       return this.$v.$invalid
     }
   },
   async mounted() {
     try {
-      const token = this.userToken()
-      await this.checkAuthorization(token)
+      await this.checkAuthorization(this.userToken)
 
       // get current users ip and set vuex userIp state
       await this.updateIpAddress()
 
       this.poll.pollOptions.forEach(option => {
-        const voterIp = option.voters.find(voter => voter.ip === this.userIp())
+        const voterIp = option.voters.find(voter => voter.ip === this.userIp)
 
         if (voterIp) {
           this.userVote.choice = option.id
@@ -206,7 +206,6 @@ export default {
   },
   methods: {
     ...mapActions(['checkAuthorization', 'updateIpAddress']),
-    ...mapGetters(['userId', 'userIp', 'isAuthorized', 'userToken']),
     async submitVote(id) {
       try {
         await this.$apollo.mutate({

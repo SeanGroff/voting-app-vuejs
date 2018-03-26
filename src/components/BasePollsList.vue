@@ -6,18 +6,28 @@
       class="box"
       @click="$router.push(`/polls/${poll.id}`)"
     >
-      <span>{{ poll.name }}</span>
+      <transition name="fade">
+        <span>{{ poll.name }}</span>
+      </transition>
       <button
-        v-show="poll.createdBy.ip === userIp"
+        v-show="isAuthorized && poll.createdBy.id === userId"
         class="delete is-danger"
-      >
-        Delete
-      </button>
+        @click.stop="isActive = true"
+      />
     </li>
+    <base-modal
+      :is-active="isActive"
+      text="Are you sure you want to delete this poll?"
+      :handle-button-click="handleDeleteClick(poll.id)"
+      :handle-close-click="isActive = false"
+     />
   </ul>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import BaseModal from '@/components/BaseModal'
+
 export default {
   props: {
     polls: {
@@ -26,10 +36,24 @@ export default {
         return []
       }
     },
-    userIp: {
+    userId: {
       type: String,
       default: ''
+    },
+    handleDeleteClick: {
+      type: Function,
+      default: function() {
+        return {}
+      }
     }
+  },
+  data() {
+    return {
+      isActive: false
+    }
+  },
+  computed: {
+    ...mapGetters(['isAuthorized'])
   }
 }
 </script>
@@ -57,5 +81,19 @@ li {
     bottom: -5px;
     cursor: pointer;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-active {
+  transition-delay: 0.25s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

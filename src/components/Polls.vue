@@ -3,7 +3,8 @@
     <base-header>Polls</base-header>
     <base-polls-list
       :polls="polls"
-      :user-ip="userIp"
+      :user-id="userId"
+      :handle-delete-click="deletePoll"
     />
   </div>
 </template>
@@ -13,6 +14,7 @@ import { mapGetters } from 'vuex'
 import BaseHeader from '@/components/BaseHeader'
 import BasePollsList from '@/components/BasePollsList'
 import getPolls from '@/graphql/getPolls'
+import deletePoll from '@/graphql/deletePoll'
 
 export default {
   components: {
@@ -30,7 +32,31 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userIp'])
+    ...mapGetters(['userId'])
+  },
+  methods: {
+    async deletePoll(pollId) {
+      try {
+        await this.$apollo.mutate({
+          mutation: deletePoll,
+          variables: {
+            pollId
+          },
+          update: (store, { data: { removePoll } }) => {
+            const data = store.readQuery({ query: getPolls })
+
+            data.polls = data.polls.filter(poll => poll.id !== pollId)
+
+            store.writeQuery({ query: getPolls, data })
+          }
+        })
+      } catch (err) {
+        this.error = 'Not Authenticated. Redirecting to login...'
+        setTimeout(() => {
+          this.$router.replace('/login')
+        }, 3000)
+      }
+    }
   }
 }
 </script>
