@@ -58,6 +58,7 @@
       >
         Delete Poll
       </button>
+      <p>Warning this will permanently delete this poll!</p>
     </div>
 
     <p

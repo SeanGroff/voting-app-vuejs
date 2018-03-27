@@ -5,23 +5,22 @@
   >
     <div class="modal-background" />
     <div class="modal-content">
-      <form @submit.prevent="handleButtonClick">
-        <div class="field">
-          <p>{{ text }}</p>
-          <button
-            class="button is-success is-large"
-            aria-label="submit"
-            type="submit"
-          >
-            Yes
-          </button>
-        </div>
-      </form>
+      <div class="field has-text-centered">
+        <p class="has-text-white has-text-weight-semibold text-margin">{{ text }}</p>
+        <button
+          class="button is-danger is-large"
+          aria-label="submit"
+          type="button"
+          @click="$emit('deletePoll')"
+        >
+          Delete
+        </button>
+      </div>
     </div>
     <button
       class="modal-close is-large"
       aria-label="close"
-      @click="handleCloseClick" />
+      @click="$emit('showModal', false)" />
   </div>
 </template>
 
@@ -35,23 +34,13 @@ export default {
     text: {
       type: String,
       default: ''
-    },
-    handleButtonClick: {
-      type: Function,
-      default: function() {
-        return {}
-      }
-    },
-    handleCloseClick: {
-      type: Function,
-      default: function() {
-        return {}
-      }
     }
   }
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.text-margin {
+  margin-bottom: 16px;
+}
 </style>

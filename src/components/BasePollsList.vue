@@ -11,22 +11,15 @@
       </transition>
       <button
         v-show="isAuthorized && poll.createdBy.id === userId"
-        class="delete is-danger"
-        @click.stop="isActive = true"
+        class="delete"
+        @click.stop="$emit('delete', poll)"
       />
     </li>
-    <base-modal
-      :is-active="isActive"
-      text="Are you sure you want to delete this poll?"
-      :handle-button-click="handleDeleteClick(poll.id)"
-      :handle-close-click="isActive = false"
-     />
   </ul>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import BaseModal from '@/components/BaseModal'
 
 export default {
   props: {
@@ -39,17 +32,6 @@ export default {
     userId: {
       type: String,
       default: ''
-    },
-    handleDeleteClick: {
-      type: Function,
-      default: function() {
-        return {}
-      }
-    }
-  },
-  data() {
-    return {
-      isActive: false
     }
   },
   computed: {

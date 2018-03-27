@@ -4,7 +4,14 @@
     <base-polls-list
       :polls="polls"
       :user-id="userId"
-      :handle-delete-click="deletePoll"
+      @showModal="showModal($event)"
+      @delete="handleDeleteClick($event)"
+    />
+    <base-modal
+      :is-active="isActive"
+      text="Are you sure you want to permanently delete this poll?"
+      @deletePoll="deletePoll"
+      @showModal="showModal($event)"
     />
   </div>
 </template>
@@ -13,17 +20,21 @@
 import { mapGetters } from 'vuex'
 import BaseHeader from '@/components/BaseHeader'
 import BasePollsList from '@/components/BasePollsList'
+import BaseModal from '@/components/BaseModal'
 import getPolls from '@/graphql/getPolls'
 import deletePoll from '@/graphql/deletePoll'
 
 export default {
   components: {
     BaseHeader,
-    BasePollsList
+    BasePollsList,
+    BaseModal
   },
   data() {
     return {
-      polls: []
+      polls: [],
+      pollSelected: null,
+      isActive: false
     }
   },
   apollo: {
@@ -35,21 +46,33 @@ export default {
     ...mapGetters(['userId'])
   },
   methods: {
-    async deletePoll(pollId) {
+    showModal(isActive) {
+      this.isActive = isActive
+    },
+    handleDeleteClick(poll) {
+      this.pollSelected = poll
+      this.isActive = true
+    },
+    async deletePoll() {
       try {
         await this.$apollo.mutate({
           mutation: deletePoll,
           variables: {
-            pollId
+            pollId: this.pollSelected.id
           },
           update: (store, { data: { removePoll } }) => {
             const data = store.readQuery({ query: getPolls })
 
-            data.polls = data.polls.filter(poll => poll.id !== pollId)
+            data.polls = data.polls.filter(
+              poll => poll.id !== this.pollSelected.id
+            )
 
             store.writeQuery({ query: getPolls, data })
           }
         })
+
+        this.pollSelected = null
+        this.isActive = false
       } catch (err) {
         this.error = 'Not Authenticated. Redirecting to login...'
         setTimeout(() => {
