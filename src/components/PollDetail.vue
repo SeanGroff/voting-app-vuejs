@@ -1,128 +1,146 @@
 <template>
-  <div class="is-centered">
-    <h1 class="title">{{ poll.name }}</h1>
+  <div class="columns poll-detail">
 
-    <social-sharing
-      v-show="isAuthorized"
-      :title="poll.name"
-      hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
-      twitter-user="_SeanGroff"
-      inline-template
-    >
-      <button class="button is-link is-small">
-        <network network="twitter">
-          <i class="fab fa-twitter-square" />
-          Share
-        </network>
-      </button>
-    </social-sharing>
+    <div class="column is-flex header-wrapper">
+      <h1 class="title is-1 has-text-grey-dark">{{ poll.name }}</h1>
+      <h2
+        v-if="poll && poll.createdBy && poll.createdBy.name"
+        class="subtitle is-4 is-capitalized has-text-grey"
+      >
+        {{ `created by: ${poll.createdBy.name}` }}
+      </h2>
 
-    <ul
-      v-for="(option, index) in poll.pollOptions"
-      :key="index"
-    >
-      <li>{{ option.name }}</li>
-      <li>
-        {{ option.votes }}
-        <button
-          :disabled="Boolean(userVote.choice)"
-          class="button is-info"
-          @click="submitVote(option.id)"
-        >
-          Vote
-        </button>
-        <button
-          :disabled="userVote.choice !== option.id"
-          class="button is-warning"
-          @click="removeVote(option.id)"
-        >
-          Undo
-        </button>
-      </li>
-    </ul>
-    <div>
-      <button
+      <social-sharing
         v-show="isAuthorized"
-        class="button is-success"
-        @click="isOpen = true"
+        :title="poll.name"
+        class="text-center"
+        hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
+        twitter-user="_SeanGroff"
+        inline-template
       >
-        Add New Option
-      </button>
+        <button class="button is-link is-small">
+          <network network="twitter">
+            <i class="fab fa-twitter-square" />
+            Share
+          </network>
+        </button>
+      </social-sharing>
     </div>
 
-    <div v-if="poll && poll.createdBy && poll.createdBy.id">
-      <button
-        v-show="isAuthorized && userId === poll.createdBy.id"
-        class="button is-danger"
-        @click="deletePoll"
+    <div class="column box">
+      <ul
+        v-for="(option, index) in poll.pollOptions"
+        :key="index"
       >
-        Delete Poll
-      </button>
-      <p>Warning this will permanently delete this poll!</p>
-    </div>
-
-    <p
-      v-show="error"
-      class="help is-danger"
-    >
-      <i class="fas fa-exclamation-triangle" />
-      {{ error }}
-    </p>
-
-    <div
-      :class="{ 'is-active': isOpen }"
-      class="modal"
-    >
-      <div class="modal-background" />
-      <div class="modal-content">
-        <form @submit.prevent="addNewOption">
-          <div class="field">
-            <label
-              class="label"
-              for="newOption">
-              New Option
-            </label>
-            <div class="control has-icons-left">
-              <input
-                v-model="newOption"
-                :class="{ 'is-danger': $v.newOption.$error }"
-                class="input"
-                placeholder="New voting option"
-                type="text"
-                autofocus
-                @input="$v.newOption.$touch"
-              >
-              <span class="icon is-small is-left">
-                <i class="fas fa-plus" />
-              </span>
-            </div>
-            <div v-show="$v.newOption.$error">
-              <p
-                v-show="!$v.newOption.required"
-                class="help is-danger"
-              >
-                <i class="fas fa-exclamation-triangle" />
-                {{ 'New option required' }}
-              </p>
-            </div>
-          </div>
+        <li>{{ option.name }}</li>
+        <li>
+          {{ option.votes }}
           <button
-            :disabled="isDisabled"
-            class="button is-success is-large"
-            aria-label="add"
-            type="submit"
+            :disabled="Boolean(userVote.choice)"
+            class="button is-info"
+            @click="submitVote(option.id)"
           >
-            Add
+            Vote
           </button>
-        </form>
+          <button
+            :disabled="userVote.choice !== option.id"
+            class="button is-warning"
+            @click="removeVote(option.id)"
+          >
+            Undo
+          </button>
+        </li>
+      </ul>
+      <div>
+        <button
+          v-show="isAuthorized"
+          class="button is-success"
+          @click="isOpen = true"
+        >
+          Add New Option
+        </button>
       </div>
-      <button
-        class="modal-close is-large"
-        aria-label="close"
-        @click="isOpen = false"
+
+      <div v-if="poll && poll.createdBy && poll.createdBy.id">
+        <button
+          v-show="isAuthorized && userId === poll.createdBy.id"
+          class="button is-danger"
+          @click="deletePoll"
+        >
+          Delete Poll
+        </button>
+        <p>Warning this will permanently delete this poll!</p>
+      </div>
+
+      <p
+        v-show="error"
+        class="help is-danger"
+      >
+        <i class="fas fa-exclamation-triangle" />
+        {{ error }}
+      </p>
+
+      <div
+        :class="{ 'is-active': isOpen }"
+        class="modal"
+      >
+        <div class="modal-background" />
+        <div class="modal-content">
+          <form @submit.prevent="addNewOption">
+            <div class="field">
+              <label
+                class="label"
+                for="newOption">
+                New Option
+              </label>
+              <div class="control has-icons-left">
+                <input
+                  v-model="newOption"
+                  :class="{ 'is-danger': $v.newOption.$error }"
+                  class="input"
+                  placeholder="New voting option"
+                  type="text"
+                  autofocus
+                  @input="$v.newOption.$touch"
+                >
+                <span class="icon is-small is-left">
+                  <i class="fas fa-plus" />
+                </span>
+              </div>
+              <div v-show="$v.newOption.$error">
+                <p
+                  v-show="!$v.newOption.required"
+                  class="help is-danger"
+                >
+                  <i class="fas fa-exclamation-triangle" />
+                  {{ 'New option required' }}
+                </p>
+              </div>
+            </div>
+            <button
+              :disabled="isDisabled"
+              class="button is-success is-large"
+              aria-label="add"
+              type="submit"
+            >
+              Add
+            </button>
+          </form>
+        </div>
+        <button
+          class="modal-close is-large"
+          aria-label="close"
+          @click="isOpen = false"
+        />
+      </div>
+    </div>
+
+    <div class="column">
+      <base-bar-chart
+        :data="dataCollection"
+        class="chart-wrapper"
       />
     </div>
-    <base-bar-chart :data="dataCollection" />
   </div>
 </template>
 
@@ -300,6 +318,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.poll-detail {
+  padding: 24px;
 
+  .header-wrapper {
+    flex-direction: column;
+  }
+
+  .chart-wrapper {
+    width: 500px;
+    height: 500px;
+  }
+}
 </style>

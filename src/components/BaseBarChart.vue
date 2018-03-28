@@ -10,11 +10,24 @@ export default {
       default() {
         return {}
       }
-    },
-    options: {
-      type: Object,
-      default() {
-        return {}
+    }
+  },
+  data() {
+    return {
+      options: {
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                max: 20,
+                min: 0,
+                stepSize: 5,
+                beginAtZero: true,
+                callback: value => Number(value).toFixed(0)
+              }
+            }
+          ]
+        }
       }
     }
   },
