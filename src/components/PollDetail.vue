@@ -10,67 +10,72 @@
         {{ `created by: ${poll.createdBy.name}` }}
       </h2>
 
-      <social-sharing
-        v-show="isAuthorized"
-        :title="poll.name"
-        class="text-center"
-        hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
-        twitter-user="_SeanGroff"
-        inline-template
-      >
-        <button class="button is-link is-small">
-          <network network="twitter">
-            <i class="fab fa-twitter-square" />
-            Share
-          </network>
+      <div class="box poll-buttons">
+        <social-sharing
+          v-show="isAuthorized"
+          :title="poll.name"
+          class="text-center poll-button-spacing full-width-button"
+          hashtags="freeCodeCamp, 100DaysOfCode, VueJS"
+          twitter-user="_SeanGroff"
+          inline-template
+        >
+          <button class="button is-link full-width-button">
+            <network network="twitter">
+              <i class="fab fa-twitter-square" />
+              Share
+            </network>
+          </button>
+        </social-sharing>
+
+        <button
+          v-show="isAuthorized"
+          class="button is-success poll-button-spacing full-width-button"
+          @click="isOpen = true"
+        >
+          Add New Option
         </button>
-      </social-sharing>
+
+        <div
+          v-if="poll && poll.createdBy && poll.createdBy.id"
+          class="poll-button-spacing full-width-button"
+        >
+          <button
+            v-show="isAuthorized && userId === poll.createdBy.id"
+            class="button is-danger full-width-button"
+            @click="deletePoll"
+          >
+            Delete Poll
+          </button>
+        </div>
+
+      </div>
     </div>
 
-    <div class="column box">
+    <div class="column text-center">
+      <h2 class="title is-3 has-text-grey-dark is-center">Cast Your Vote</h2>
       <ul
         v-for="(option, index) in poll.pollOptions"
         :key="index"
       >
-        <li>{{ option.name }}</li>
-        <li>
-          {{ option.votes }}
+        <li class="title is-5 top-bottom-gutter">{{ option.name }}</li>
+        <li class="title is-5 has-text-grey voting-buttons-row">
+          <span>{{ option.votes }}</span>
           <button
             :disabled="Boolean(userVote.choice)"
-            class="button is-info"
+            class="button is-primary voting-button"
             @click="submitVote(option.id)"
           >
             Vote
           </button>
           <button
             :disabled="userVote.choice !== option.id"
-            class="button is-warning"
+            class="button is-warning voting-button"
             @click="removeVote(option.id)"
           >
             Undo
           </button>
         </li>
       </ul>
-      <div>
-        <button
-          v-show="isAuthorized"
-          class="button is-success"
-          @click="isOpen = true"
-        >
-          Add New Option
-        </button>
-      </div>
-
-      <div v-if="poll && poll.createdBy && poll.createdBy.id">
-        <button
-          v-show="isAuthorized && userId === poll.createdBy.id"
-          class="button is-danger"
-          @click="deletePoll"
-        >
-          Delete Poll
-        </button>
-        <p>Warning this will permanently delete this poll!</p>
-      </div>
 
       <p
         v-show="error"
@@ -326,9 +331,37 @@ export default {
     flex-direction: column;
   }
 
-  .chart-wrapper {
-    width: 500px;
-    height: 500px;
+  .poll-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .poll-button-spacing {
+      margin: 8px 0;
+    }
+
+    .full-width-button {
+      width: 100%;
+    }
+  }
+
+  .voting-buttons-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .voting-button {
+    margin: 0 8px;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .top-bottom-gutter {
+    margin: 16px 0;
   }
 }
 </style>
