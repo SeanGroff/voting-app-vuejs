@@ -4,7 +4,7 @@ import axios from 'axios'
 import createPersistedState from 'vuex-persistedstate'
 import { apolloClient } from '@/graphql/apolloClient'
 
-axios.defaults.baseURL = 'https://seangroff.space'
+axios.defaults.baseURL = 'https://pollz.seangroff.space'
 
 Vue.use(Vuex)
 

@@ -8,7 +8,7 @@ import { store } from '@/store'
 // Create Apollo Client
 export const apolloClient = new ApolloClient({
   // Pass your GraphQL endpoint to uri
-  uri: 'https://seangroff.space/graphql',
+  uri: 'https://pollz.seangroff.space/graphql',
   // This function is called on each request
   request: operation => {
     const token = store.getters.userToken
