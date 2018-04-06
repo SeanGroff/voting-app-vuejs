@@ -8,10 +8,7 @@ import { store } from '@/store'
 // Create Apollo Client
 export const apolloClient = new ApolloClient({
   // Pass your GraphQL endpoint to uri
-  uri:
-    process.env.NODE_ENV === 'production'
-      ? '167.99.234.185'
-      : 'http://localhost:3000/graphql',
+  uri: 'https://seangroff.space/graphql',
   // This function is called on each request
   request: operation => {
     const token = store.getters.userToken
