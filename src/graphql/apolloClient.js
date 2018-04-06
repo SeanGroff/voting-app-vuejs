@@ -10,7 +10,7 @@ export const apolloClient = new ApolloClient({
   // Pass your GraphQL endpoint to uri
   uri:
     process.env.NODE_ENV === 'production'
-      ? 'unknown'
+      ? '167.99.234.185'
       : 'http://localhost:3000/graphql',
   // This function is called on each request
   request: operation => {

@@ -5,7 +5,9 @@ import createPersistedState from 'vuex-persistedstate'
 import { apolloClient } from '@/graphql/apolloClient'
 
 axios.defaults.baseURL =
-  process.env.NODE_ENV === 'production' ? 'unknown' : 'http://localhost:3000'
+  process.env.NODE_ENV === 'production'
+    ? '167.99.234.185'
+    : 'http://localhost:3000'
 
 Vue.use(Vuex)
 
